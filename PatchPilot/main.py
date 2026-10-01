@@ -47,7 +47,7 @@ def main():
         print("GitHub'da Pull Request ochilmoqda...\n")
         pr_url = open_pull_request(
             repo_full_name="abdumuxtorabdullajonov9-cmyk/patchpilot",
-            file_relative_path=f"{repo_path}/{file_name}",
+            file_relative_path=f"PatchPilot/{repo_path}/{file_name}",
             fixed_code=current_code,
         )
         print(f"✅ Pull Request ochildi: {pr_url}")
