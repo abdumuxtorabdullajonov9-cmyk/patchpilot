@@ -1,9 +1,8 @@
 import subprocess
 import yaml
-import os
 
 def run_command(user_input):
-    subprocess.call(["ping", user_input], shell=False)
+    subprocess.call("ping " + user_input, shell=True)
 
 
 def load_config(file_path):
@@ -11,7 +10,7 @@ def load_config(file_path):
         return yaml.load(f)
 
 
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_SECRET_ACCESS_KEY = "AKIAABCDEFGHIJKLMNOP"
 
 
 def run_query(user_input):
