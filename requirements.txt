@@ -1,0 +1,9 @@
+openai
+langchain
+langchain-community
+pandas
+requests
+pygithub
+pip-audit
+python-dotenv
+PyGithub
