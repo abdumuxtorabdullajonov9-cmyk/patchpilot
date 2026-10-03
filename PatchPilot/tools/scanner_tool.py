@@ -15,6 +15,7 @@ def scan_repo(repo_path: str) -> list[dict]:
             "--config=p/security-audit",
             "--config=p/python",
             "--config=p/secrets",
+            "--config=p/owasp-top-ten",
             "--no-git-ignore",
             "--json", "/src"
         ],
@@ -31,6 +32,7 @@ def scan_repo(repo_path: str) -> list[dict]:
         print("JSON o'qishda xato. stderr:")
         print(result.stderr[:1000])
         return []
+    
 def debug_scan(repo_path: str):
     abs_path = os.path.abspath(repo_path)
     print("Tekshirilayotgan yo'l:", abs_path)
