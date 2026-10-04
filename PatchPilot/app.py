@@ -58,8 +58,12 @@ if run_button and repo_url:
                 st.write(result["explanation"])
 
             if result["is_real_vulnerability"]:
-                rel_path = os.path.relpath(path, local_path) if os.path.isabs(path) else path
-                abs_file = os.path.join(local_path, rel_path) if not os.path.isabs(path) else path
+                container_prefix = "/src/"
+                if path.startswith(container_prefix):
+                    rel_path = path[len(container_prefix):]
+                else:
+                    rel_path = path.lstrip("/")
+                abs_file = os.path.join(local_path, rel_path)
 
                 if abs_file not in files_to_fix:
                     with open(abs_file, "r", encoding="utf-8") as src:
