@@ -106,7 +106,6 @@ if run_button and repo_url:
             try:
                 for abs_file, fixed_code in files_to_fix.items():
                     rel_path = os.path.relpath(abs_file, local_path).replace("\\", "/")
-                    st.write(f"DEBUG: so'ralayotgan yo'l → `{rel_path}`")  # vaqtincha, keyin olib tashlanadi
                     pr_url = open_pull_request(
                         repo_full_name=repo_full_name,
                         file_relative_path=rel_path,

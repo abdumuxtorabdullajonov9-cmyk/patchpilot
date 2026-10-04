@@ -1,12 +1,14 @@
 import os
 from github import Github
 from dotenv import load_dotenv
-
+import time
 load_dotenv()
 
 
 def open_pull_request(repo_full_name: str, file_relative_path: str, fixed_code: str,
-                       branch_name: str = "patchpilot-fix", base_branch: str = "main") -> str:
+                       branch_name: str = None, base_branch: str = "main") -> str:
+    if branch_name is None:
+        branch_name = f"patchpilot-fix-{int(time.time())}"
     """
     Repo'da yangi branch ochadi, tuzatilgan faylni commit qiladi va Pull Request yaratadi.
     repo_full_name: masalan "abdumuxtorabdullajonov9-cmyk/patchpilot"
