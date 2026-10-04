@@ -6,12 +6,15 @@ import os
 def scan_repo(repo_path: str) -> list[dict]:
     abs_path = os.path.abspath(repo_path)
     rules_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "custom_rules.yml"))
+    cache_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".semgrep_cache"))
+    os.makedirs(cache_dir, exist_ok=True)
 
     result = subprocess.run(
         [
             "docker", "run", "--rm",
             "-v", f"{abs_path}:/src",
             "-v", f"{rules_path}:/rules/custom_rules.yml",
+            "-v", f"{cache_dir}:/root/.cache/semgrep",
             "semgrep/semgrep",
             "semgrep",
             "--config=p/security-audit",
