@@ -74,7 +74,12 @@ def run_benchmark():
 
     total_found = sum(r["found"] for r in report)
     total_verified = sum(1 for r in report if r["verified_success"])
+    times = [r["time_sec"] for r in report]
+    avg_time = sum(times) / len(times)
+
     print(f"\nJami: {total_found} ta zaiflik topildi, {total_verified}/{len(report)} repo to'liq tuzatildi.")
+    print(f"O'rtacha vaqt: {avg_time:.1f}s (eng tez: {min(times)}s, eng sekin: {max(times)}s)")
+    print("Eslatma: vaqt asosan Nemotron API serverining joriy yuklamasiga bog'liq.")
 
 
 if __name__ == "__main__":
