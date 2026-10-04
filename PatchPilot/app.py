@@ -86,6 +86,7 @@ if run_button and repo_url:
         status.write(f"✅ Applied {fixed_count} fix(es). Verifying in sandbox...")
 
         all_verified = True
+        failed_files = []
         for abs_file, fixed_code in files_to_fix.items():
             rel_path = os.path.relpath(abs_file, local_path)
             rel_dir = os.path.dirname(rel_path) or "."
@@ -93,9 +94,17 @@ if run_button and repo_url:
             verification = verify_fix(os.path.join(local_path, rel_dir), file_name, fixed_code)
             if not verification["success"]:
                 all_verified = False
+                failed_files.append((rel_path, verification["details"]))
             else:
                 with open(abs_file, "w", encoding="utf-8") as out:
                     out.write(fixed_code)
+
+        if failed_files:
+            st.warning("Quyidagi fayllarda hali muammo qoldi:")
+            for fname, details in failed_files:
+                st.write(f"**{fname}:**")
+                for d in details:
+                    st.write(f"- {d.get('check_id')}")
 
         if all_verified:
             status.update(label="✅ All fixes verified!", state="complete")
