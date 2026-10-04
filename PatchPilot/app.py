@@ -35,6 +35,11 @@ if run_button and repo_url:
 
         status.write("✅ Repository cloned.")
 
+        templates_path = os.path.join(local_path, "PatchPilot", "examples", "_templates")
+        if os.path.exists(templates_path):
+            shutil.rmtree(templates_path)
+            status.write("ℹ️ Skipped `_templates/` (benchmark archive, not real code).")
+
         status.update(label="Scanning for vulnerabilities...")
         findings = scan_repo(local_path)
         status.write(f"Found **{len(findings)}** potential issue(s).")
@@ -101,6 +106,7 @@ if run_button and repo_url:
             try:
                 for abs_file, fixed_code in files_to_fix.items():
                     rel_path = os.path.relpath(abs_file, local_path).replace("\\", "/")
+                    st.write(f"DEBUG: so'ralayotgan yo'l → `{rel_path}`")  # vaqtincha, keyin olib tashlanadi
                     pr_url = open_pull_request(
                         repo_full_name=repo_full_name,
                         file_relative_path=rel_path,
