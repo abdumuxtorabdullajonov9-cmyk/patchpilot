@@ -7,3 +7,4 @@ pygithub
 pip-audit
 python-dotenv
 PyGithub
+streamlit
