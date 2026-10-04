@@ -4,6 +4,7 @@ import os
 
 
 def scan_repo(repo_path: str) -> list[dict]:
+    """Semgrep'ni Docker orqali ishga tushirib, repo'ni skanerlaydi."""
     abs_path = os.path.abspath(repo_path)
     rules_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "custom_rules.yml"))
     cache_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".semgrep_cache"))
@@ -17,10 +18,18 @@ def scan_repo(repo_path: str) -> list[dict]:
             "-v", f"{cache_dir}:/root/.cache/semgrep",
             "semgrep/semgrep",
             "semgrep",
+            "--config=auto",
             "--config=p/security-audit",
-            "--config=p/python",
             "--config=p/secrets",
             "--config=p/owasp-top-ten",
+            "--config=p/python",
+            "--config=p/javascript",
+            "--config=p/typescript",
+            "--config=p/django",
+            "--config=p/flask",
+            "--config=p/docker",
+            "--config=p/sql-injection",
+            "--config=p/command-injection",
             "--config=/rules/custom_rules.yml",
             "--no-git-ignore",
             "--json", "/src"

@@ -43,7 +43,7 @@ def run_benchmark():
         for f in findings:
             result = triage_finding(f)
             if result["is_real_vulnerability"]:
-                current_code = fix_finding(f, current_code)
+                current_code = fix_finding(f, current_code, file_path=file_path)
                 fixed_count += 1
 
         verified = False

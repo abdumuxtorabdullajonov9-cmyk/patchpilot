@@ -75,7 +75,7 @@ if run_button and repo_url:
                         files_to_fix[abs_file] = src.read()
 
                 status.write(f"🛠️ Fixing `{check_id}`...")
-                files_to_fix[abs_file] = fix_finding(f, files_to_fix[abs_file])
+                files_to_fix[abs_file] = fix_finding(f, files_to_fix[abs_file], file_path=abs_file)
                 fixed_count += 1
 
         if fixed_count == 0:

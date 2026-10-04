@@ -1,26 +1,31 @@
 from agents.llm_client import client, MODEL_ULTRA
 
 
-def fix_finding(finding: dict, file_content: str) -> str:
+def fix_finding(finding: dict, file_content: str, file_path: str = "") -> str:
     """Nemotron Ultra yordamida zaiflikni tuzatadi va to'liq yangilangan fayl matnini qaytaradi."""
 
     check_id = finding.get("check_id", "noma'lum")
     message = finding.get("extra", {}).get("message", "")
     line = finding.get("start", {}).get("line", "?")
 
-    prompt = f"""Siz tajribali xavfsizlik muhandisisiz. Quyidagi Python faylida xavfsizlik zaifligi bor.
+    file_extension = file_path.split(".")[-1] if "." in file_path else ""
 
-Qoida: {check_id}
-Qator: {line}
-Muammo: {message}
-
-To'liq fayl matni:
-```python
-{file_content}
-```
-
-Vazifa: faylni tuzating, faqat aynan shu zaiflikni bartaraf eting, boshqa kodni o'zgartirmang, funksiyalar nomini saqlang.
-FAQAT tuzatilgan to'liq Python kodini qaytaring, hech qanday izoh, tushuntirish yoki ```python``` belgilarisiz."""
+    prompt = (
+        "Siz tajribali, ko'p tilli xavfsizlik muhandisisiz. "
+        f"Quyidagi faylda ({file_extension} tilida yozilgan) xavfsizlik zaifligi bor.\n\n"
+        f"Qoida: {check_id}\n"
+        f"Qator: {line}\n"
+        f"Muammo: {message}\n\n"
+        "To'liq fayl matni:\n"
+        "-----\n"
+        f"{file_content}\n"
+        "-----\n\n"
+        "Vazifa: faylni tuzating, faqat aynan shu zaiflikni bartaraf eting, "
+        "boshqa kodni o'zgartirmang, funksiya va o'zgaruvchi nomlarini saqlang, "
+        "kodning dasturlash tilini o'zgartirmang.\n"
+        "FAQAT tuzatilgan to'liq kodni qaytaring, hech qanday izoh, "
+        "tushuntirish yoki kod bloki belgilarisiz."
+    )
 
     resp = client.chat.completions.create(
         model=MODEL_ULTRA,
@@ -30,7 +35,6 @@ FAQAT tuzatilgan to'liq Python kodini qaytaring, hech qanday izoh, tushuntirish 
 
     fixed_code = resp.choices[0].message.content.strip()
 
-    # Model ba'zan ```python ... ``` bilan o'rab yuborishi mumkin, tozalaymiz
     if fixed_code.startswith("```"):
         lines = fixed_code.split("\n")
         lines = lines[1:] if lines[0].startswith("```") else lines

@@ -28,7 +28,7 @@ def main():
 
         if result["is_real_vulnerability"]:
             print("Tuzatish yozilmoqda...\n")
-            current_code = fix_finding(f, current_code)
+            current_code = fix_finding(f, current_code, file_path=file_path)
             real_vulns_fixed += 1
 
     if real_vulns_fixed == 0:
