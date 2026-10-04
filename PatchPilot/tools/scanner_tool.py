@@ -5,17 +5,20 @@ import os
 
 def scan_repo(repo_path: str) -> list[dict]:
     abs_path = os.path.abspath(repo_path)
+    rules_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "custom_rules.yml"))
 
     result = subprocess.run(
         [
             "docker", "run", "--rm",
             "-v", f"{abs_path}:/src",
+            "-v", f"{rules_path}:/rules/custom_rules.yml",
             "semgrep/semgrep",
             "semgrep",
             "--config=p/security-audit",
             "--config=p/python",
             "--config=p/secrets",
             "--config=p/owasp-top-ten",
+            "--config=/rules/custom_rules.yml",
             "--no-git-ignore",
             "--json", "/src"
         ],
