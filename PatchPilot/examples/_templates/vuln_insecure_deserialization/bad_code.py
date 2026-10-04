@@ -2,4 +2,4 @@ import yaml
 
 def load_user_config(file_path):
     with open(file_path) as f:
-        return yaml.safe_load(f)
+        return yaml.load(f)

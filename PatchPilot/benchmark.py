@@ -3,6 +3,17 @@ from tools.scanner_tool import scan_repo
 from agents.triage_agent import triage_finding
 from agents.fixer_agent import fix_finding
 from tools.sandbox_tool import verify_fix
+import shutil
+import os
+
+def reset_from_templates():
+    template_root = "examples/_templates"
+    for folder in os.listdir(template_root):
+        src = os.path.join(template_root, folder, "bad_code.py")
+        dst = os.path.join("examples", folder, "bad_code.py")
+        if os.path.exists(src):
+            shutil.copy(src, dst)
+    print("Barcha namunalar asl holatga qaytarildi.\n")
 
 TEST_REPOS = [
     ("examples/vulnerable_repo", "bad_code.py"),
@@ -14,6 +25,7 @@ TEST_REPOS = [
 
 
 def run_benchmark():
+    reset_from_templates()
     report = []
 
     for repo_path, file_name in TEST_REPOS:
