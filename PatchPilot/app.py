@@ -3,10 +3,9 @@ import os
 import shutil
 import tempfile
 import subprocess
-
 from tools.scanner_tool import scan_repo
 from agents.triage_agent import triage_finding
-from agents.fixer_agent import fix_finding
+from agents.fixer_agent import fix_multiple_findings
 from tools.sandbox_tool import verify_fix
 from agents.pr_agent import open_pull_request
 
@@ -57,8 +56,7 @@ if run_button and repo_url:
             st.success("This repository looks clean according to our rules.")
             st.stop()
 
-        files_to_fix = {}
-        fixed_count = 0
+        findings_by_file = {}
 
         for f in findings:
             check_id = f.get("check_id", "unknown")
@@ -72,19 +70,19 @@ if run_button and repo_url:
 
             if result["is_real_vulnerability"]:
                 container_prefix = "/src/"
-                if path.startswith(container_prefix):
-                    rel_path = path[len(container_prefix):]
-                else:
-                    rel_path = path.lstrip("/")
+                rel_path = path[len(container_prefix):] if path.startswith(container_prefix) else path.lstrip("/")
                 abs_file = os.path.join(local_path, rel_path)
+                findings_by_file.setdefault(abs_file, []).append(f)
 
-                if abs_file not in files_to_fix:
-                    with open(abs_file, "r", encoding="utf-8") as src:
-                        files_to_fix[abs_file] = src.read()
+        files_to_fix = {}
+        fixed_count = 0
 
-                status.write(f"🛠️ Fixing `{check_id}`...")
-                files_to_fix[abs_file] = fix_finding(f, files_to_fix[abs_file], file_path=abs_file)
-                fixed_count += 1
+        for abs_file, file_findings in findings_by_file.items():
+            with open(abs_file, "r", encoding="utf-8") as src:
+                original = src.read()
+            status.write(f"🛠️ Fixing {len(file_findings)} issue(s) in `{os.path.basename(abs_file)}`...")
+            files_to_fix[abs_file] = fix_multiple_findings(file_findings, original, file_path=abs_file)
+            fixed_count += len(file_findings)
 
         if fixed_count == 0:
             status.update(label="No real vulnerabilities confirmed.", state="complete")
