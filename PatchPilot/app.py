@@ -23,13 +23,21 @@ if run_button and repo_url:
         local_path = os.path.join(tmp_dir, "repo")
 
         status = st.status("Cloning repository...", expanded=True)
-        clone_result = subprocess.run(
-            ["git", "clone", "--depth", "1", repo_url, local_path],
-            capture_output=True, text=True
-        )
+
+        clone_result = None
+        for attempt in range(3):
+            clone_result = subprocess.run(
+                ["git", "clone", "--depth", "1", repo_url, local_path],
+                capture_output=True, text=True
+            )
+            if clone_result.returncode == 0:
+                break
+            status.write(f"⚠️ Clone attempt {attempt + 1} failed, retrying...")
+            if os.path.exists(local_path):
+                shutil.rmtree(local_path, ignore_errors=True)
 
         if clone_result.returncode != 0:
-            status.update(label="❌ Clone failed", state="error")
+            status.update(label="❌ Clone failed after 3 attempts", state="error")
             st.error(clone_result.stderr[:500])
             st.stop()
 
